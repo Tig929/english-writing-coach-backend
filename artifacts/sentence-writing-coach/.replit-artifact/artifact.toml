@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "English Sentence Writing Coach"
+description = "An interactive English-writing practice app where learners choose a topic, build sentences from a word bank, and receive encouraging Socratic feedback from a Gemini coaching agent."
+version = "1.0.0"
+id = "artifacts/sentence-writing-coach"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21689
+
+[services.development]
+run = "pnpm --filter @workspace/sentence-writing-coach run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/sentence-writing-coach", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/sentence-writing-coach/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21689"
+BASE_PATH = "/"
