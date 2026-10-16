@@ -1,0 +1,1 @@
+- [Gemini API choice](gemini-api-choice.md) — keep this app on the user's own Gemini key, not Replit-managed AI access.

@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: coach
+    description: Socratic English sentence-writing coaching
 paths:
   /healthz:
     get:
@@ -24,6 +26,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /coach/chat:
+    post:
+      operationId: sendCoachMessage
+      tags: [coach]
+      summary: Get encouraging sentence-writing guidance
+      description: Returns a praise-first Socratic coaching response without providing the corrected sentence.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoachMessageInput"
+      responses:
+        "200":
+          description: Coaching response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoachMessageOutput"
+        "400":
+          description: Invalid coaching request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "502":
+          description: Gemini could not complete the coaching response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Gemini API key is not configured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +72,60 @@ components:
           type: string
       required:
         - status
+    ChatTurn:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+          maxLength: 500
+      required:
+        - role
+        - content
+    CoachMessageInput:
+      type: object
+      properties:
+        topic:
+          type: string
+          enum: [Family, Daily Routine, Food]
+        learnerMessage:
+          type: string
+          minLength: 1
+          maxLength: 500
+        sentenceDraft:
+          type: string
+          maxLength: 500
+        selectedWords:
+          type: array
+          maxItems: 24
+          items:
+            type: string
+            maxLength: 40
+        history:
+          type: array
+          maxItems: 12
+          items:
+            $ref: "#/components/schemas/ChatTurn"
+      required:
+        - topic
+        - learnerMessage
+        - sentenceDraft
+        - selectedWords
+        - history
+    CoachMessageOutput:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
 

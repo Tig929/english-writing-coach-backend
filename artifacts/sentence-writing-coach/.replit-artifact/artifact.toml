@@ -26,3 +26,26 @@ to = "/index.html"
 [services.env]
 PORT = "21689"
 BASE_PATH = "/"
+
+[[services]]
+name = "coach-api"
+paths = [ "/api/coach" ]
+localPort = 8000
+
+[services.development]
+run = "cd \"$(git rev-parse --show-toplevel)\" && python -m uvicorn main:app --app-dir artifacts/sentence-writing-coach/backend --host 0.0.0.0 --port $PORT"
+
+[services.env]
+PORT = "8000"
+
+[services.production.build]
+args = [ "uv", "sync", "--locked" ]
+
+[services.production.run]
+args = [ "uv", "run", "python", "-m", "uvicorn", "main:app", "--app-dir", "artifacts/sentence-writing-coach/backend", "--host", "0.0.0.0", "--port", "8000" ]
+
+[services.production.run.env]
+PORT = "8000"
+
+[services.production.health.startup]
+path = "/api/coach/healthz"
