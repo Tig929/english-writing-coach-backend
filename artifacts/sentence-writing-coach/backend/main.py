@@ -112,12 +112,12 @@ def generate_coaching_response(payload: CoachMessageInput, api_key: str) -> str:
     )
     client = genai.Client(api_key=api_key)
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.8-flash",
         contents=[types.Content(role="user", parts=[types.Part.from_text(text=prompt)])],
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTION,
             temperature=0.35,
-            max_output_tokens=8192,
+            max_output_tokens=256,
         ),
     )
     message = (response.text or "").strip()
