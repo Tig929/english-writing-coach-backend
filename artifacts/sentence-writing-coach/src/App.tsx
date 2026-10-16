@@ -276,9 +276,7 @@ function Home() {
           {errorText && (
             <div className="error-notice" role="alert" data-testid="status-coach-error">
               <strong>Your message is still here.</strong>
-              {errorText.includes('503') || errorText.toLowerCase().includes('service unavailable')
-                ? 'The coach is taking a short pause. The coaching service may need its API key before it can reply.'
-                : errorText}
+              {errorText.replace(/^HTTP \d+(?: [^:]+)?:\s*/i, '')}
               {failedInput && (
                 <button type="button" className="retry-button" onClick={() => submitInput(failedInput, '')} data-testid="button-retry-coach">
                   Try again
